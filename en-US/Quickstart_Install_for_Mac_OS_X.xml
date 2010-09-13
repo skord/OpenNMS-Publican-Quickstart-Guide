@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Quickstart_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<chapter id="chap-Quickstart_Guide-Quickstart_Install_for_Mac_OS_X">
+	<title>Quickstart Install Instructions for Mac OS X</title>
+	<para>
+		Installation of &PRODUCT; is supported on Mac OS X via the <ulink url="http://www.finkproject.org">Fink Project</ulink>, a package manager for Mac OS X. This quickstart assumes you are comfortable using a terminal and a text editor.
+		<note>
+			<title>While it is possible...</title>
+			<para>
+				While it is possible to install &PRODUCT; on this platform using other methods, the developers of &PRODUCT; make the Fink packages available directly to the Fink repositories. By using this package you are choosing the same method they use to install and maintain a running instance of &PRODUCT;. 
+			</para>
+		</note>
+	</para>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_Mac_OS_X-Preperation">
+		<title>Preparation</title>
+		<para>
+			Installing the Fink package manager is outside the scope of this document, but instructions can be found at <ulink url="http://www.finkproject.org/doc/bundled/install.php" />. 
+		</para>
+		<para>
+			Once Fink is installed on your target system, you must configure it to use the <systemitem>unstable</systemitem> repository. Edit <filename>/sw/etc/fink.conf</filename>, and add the <systemitem>unstable</systemitem> package repositories to the <computeroutput>Trees</computeroutput> line so it resembles the following example:
+			<screen>
+Trees: local/main stable/main stable/crypto unstable/main unstable/crypto
+			</screen>
+		</para>
+		<para>
+			After completing the edits, you will need to update Fink with the new configuration by typing <command>fink selfupdate-rsync</command> and then <command>fink scanpackages</command> in a terminal window.
+		</para>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_Mac_OS_X-Installing_OpenNMS_With_Fink">
+		<title>Installing OpenNMS With Fink</title>
+		<para>
+			Installing &PRODUCT; from Fink will also install all of its dependencies if they are currently not installed. Currently, &PRODUCT; this means that the <systemitem>jicmp</systemitem>, <systemitem>opennms-pgsql</systemitem>, <systemitem>postgresql-server</systemitem>, <systemitem>rrdtool</systemitem>, and <systemitem>rrdtool-java</systemitem> packages will be installed when you install &PRODUCT;. 
+		</para>
+		<para>
+			Installing &PRODUCT; requires first typing <command>fink selfupdate-rsync</command> in a terminal window (a best practice before installing any package), then subsequently running the <command>fink install opennms</command> in the terminal.
+		</para>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_Mac_OS_X-Post_Install_Configuration">
+		<title>Post-Install Configuration</title>
+		<para>
+			Even though the packages are installed, some configuration is still necessary before starting &PRODUCT;
+		</para>
+		<section id="sect-Quickstart_Guide-Quickstart_Install_for_Mac_OS_X-Post_Install_Configuration-System_Limits">
+			<title>Setting System Limits</title>
+			<para>
+				You will need to create a <filename>/etc/sysctl.conf</filename> to define some shared memory limits. Create <filename>/etc/sysctl.conf</filename> with the following contents:
+				<screen>
+kern.maxfiles=65536
+kern.sysv.shmmax=16777216
+kern.sysv.shmmin=1
+kern.sysv.shmmni=128
+kern.sysv.shmseg=32
+kern.sysv.shmall=4096				
+			</screen>
+			</para>
+			<para>
+				You can now reboot your system to make these changes take effect. 
+			</para>
+		</section>
+		<section id="sect-Quickstart_Guide-Quickstart_Install_for_Mac_OS_X-Post_Install_Configuration-PostgreSQL_Limits">
+			<title>PostgreSQL Limits</title>
+			<para>
+				After the changes in <filename>/etc/sysctl.conf</filename> have been put into effect, you will want to edit <filename>postgresql.conf</filename> <remark>find the default full path to this</remark> to allow connections to be made to the database, increase the maximum amount of connections that can be made to the database and change a memory constraint. 
+			</para>
+			<para>
+				Make sure the following items are set in <filename>postgresql.conf</filename>:
+				<screen>
+listen_addresses = 'localhost'
+max_connections  = 192
+shared_buffers   = 3072kB
+				</screen>
+			</para>
+			<para>
+				If PostgreSQL has already been started, you will need to restart it to make the changes take effect. To restart, type <command>pgsql.sh restart</command><remark>find the full path to this</remark> in a terminal. If you have not yet started PostgreSQL, this should also start it. 
+			</para>
+		</section>
+		<section id="sect-Quickstart_Guide-Quickstart_Install_for_Mac_OS_X-Post_Install_Configuration-PostgreSQL_and_Schema_Setup">
+			<title>PostgreSQL and &PRODUCT; Database Schema Setup</title>
+			<para>
+				Now that PostgreSQL is running, create the user that &PRODUCT; will use to connect to the database by typing <command>sudo @PREFIX@/bin/createuser -s -d -r -l -e -U postgres opennms</command><remark>need another full path</remark> in a terminal. 
+			</para>
+			<para>
+				With the user created, you can now use the &PRODUCT; installer to create the database and bootstrap &PRODUCT;. Type <command>sudo @PREFIX@/var/opennms/bin/install -disU -u opennms</command> to start this process. Errors reported by the installer should also include basic instructions on what needs to be done, if not, consult the the sources in the Feedback section or visit the &PRODUCT; wiki at <ulink url="http://www.opennms.org" />.
+			</para>
+			<para>
+				<warning>
+					<title>IPLIKE Compatibility</title>
+					<para>
+						Note that the <systemitem>iplike-pgsqlXX</systemitem> package must match the version of PostgreSQL	you have installed through fink, or the installer will fail.
+					</para>
+				</warning>
+			</para>
+		</section>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_Mac_OS_X-Starting_Up">
+		<title>Starting Up</title>
+		<para>
+			With configuration complete, you can start &PRODUCT;:
+			<screen>
+sudo @PREFIX@/bin/pgsql.sh start
+sudo @PREFIX@/bin/opennms start
+			</screen>
+		</para>
+		<para>
+			To have PostgreSQL and &PRODUCT; start on boot, you can use <command>daemonic</command> which was installed as a a dependency to &PRODUCT; if you installed with Fink. Type <command>sudo daemonic enable postgresql<replaceable>XX</replaceable></command> where <replaceable>XX</replaceable> is the version of PostgreSQL installed by Fink to have it start on boot. Likewise, type <command>sudo daemonic enable opennms</command> to have it activated at boot time as well.
+		</para>
+		<para>
+			If all steps have been successful, you can now login to <filename>http://<replaceable>your-machine-ip</replaceable>:8980/opennms</filename> and login as <systemitem>admin</systemitem> with the default password of <systemitem>admin</systemitem>.
+		</para>
+	</section>
+</chapter>

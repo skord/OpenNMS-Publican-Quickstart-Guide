@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Quickstart_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<bookinfo id="book-Quickstart_Guide-Quickstart_Guide">
+	<title>Quickstart Guide</title>
+	<subtitle>Quick Install Instructions for &PRODUCT;</subtitle>
+	<productname>OpenNMS</productname>
+	<productnumber>1.8.3</productnumber>
+	<edition>0</edition>
+	<pubsnumber>0</pubsnumber>
+	<abstract>
+		<para>
+			Installation instructions for &PRODUCT;. Includes instructions for various system platforms. 
+		</para>
+	</abstract>
+	<corpauthor>
+		<inlinemediaobject>
+			<imageobject>
+				<imagedata fileref="Common_Content/images/title_logo.png" format="PNG" />
+			</imageobject>
+		</inlinemediaobject>
+	</corpauthor>
+	<xi:include href="Common_Content/Legal_Notice.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include href="Author_Group.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+</bookinfo>
+

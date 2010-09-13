@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "Quickstart_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="chap-Quickstart_Guide-Quickstart_Install_for_RPM_Systems">
+	<title>Quickstart Install Instructions for RPM and YUM Based Systems</title>
+	<para>
+		These instructions cover installation for Linux distributions that make use of the Yum packaging system. Some distributions that make use of this packaging system include <trademark class="registered">Fedora</trademark>, <trademark class="registered">Red Hat Enterprise Linux</trademark> and CentOS.
+	</para>
+	<para>
+		Installing a YUM package puts a permanent repository reference into the system the package is installed on. This allows the administrator of the machine to have an upgrade path for future &PRODUCT; releases. You may choose to disable the repository after installation to disable this feature. 
+	</para>
+	<para>
+		The YUM packaging system will also attempt to resolve any dependencies required by a package and install them as well. For instance, installing the <filename>opennms-plugins.noarch</filename> package will attempt to install <filename>opennms-plugin-provisioning-link.noarch</filename>, <filename>opennms-plugin-provisioning-map.noarch</filename> and other dependencies as well. 
+	</para>
+	<para>
+		<important>
+			<title>Installing on RHEL 4</title>
+				<para>If you want to use Yum on Red Hat Enterprise Linux 4 instead of <command>uptodate</command>, see the <ulink url="http://www.opennms.org/wiki/Yum_Installation_On_RHEL_4.">Yum Installation on RHEL 4</ulink> on the OpenNMS.org wiki.
+			</para>
+		</important>
+	</para>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_RPM_Systems-Preperation">
+		<title>Preparation</title>
+		<para>
+			Before you begin, you may want to install the install the YUM fastestmirror package if it is supported by your platform. This package will attempt to optimize your selection of download mirrors to provide the best speeds possible. Fully deploying and administering this package is outside the scope of this document, instead refer to the <ulink url="http://wiki.centos.org/PackageManagement/Yum/FastestMirror">fastestmirror</ulink> documentation on the CentOS wiki site.
+		</para>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_RPM_Systems-Choosing_an_OpenNMS_Release">
+		<title>Choosing an &PRODUCT; Release</title>
+		<para>
+			The &PRODUCT; Community makes four builds of the &PRODUCT; software platform available through YUM repositories. These builds vary in purpose, from deployment ready to developer specific to those who wish to live on the cutting edge.
+		</para>
+		<para>
+			<variablelist>
+				<title>&PRODUCT; Build Releases</title>
+				<varlistentry>
+					<term>stable</term>
+					<listitem>
+						<para>
+							The latest officially released stable version of &PRODUCT;. Current stable version is &PRODVER;. If you are putting &PRODUCT; into a production environment for daily use, this is the recommended version install.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>unstable</term>
+					<listitem>
+						<para>
+							The latest officially released development version of &PRODUCT;. This may have more features than the stable version, but it may also contain bugs that have yet to be discovered or triaged.
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>testing</term>
+					<listitem>
+						<para>
+							A nightly build of the code that will be part of the next stable version of &PRODUCT;. 
+						</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>snapshot</term>
+					<listitem>
+						<para>
+							A nightly build of the very latest development version of &PRODUCT;. 
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</para>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_RPM_Systems-Installing_Repository_RPMs">
+		<title>Installing Repository RPMs</title>
+		<para>
+			To allow your system to fetch the &PRODUCT; packages from the &PRODUCT; YUM repository, you must first install the appropriate package from the <ulink url="http://yum.opennms.org">&PRODUCT; YUM Repository site</ulink>. Choose the release you want to use and then install the distribution-specific RPM package appropriate for your platform.
+		</para>
+		<para>
+			To install this package, type: <command>su -c 'rpm -Uvh <replaceable>package_url</replaceable>'</command> at a shell prompt. If the package you wish to install is located at <filename>http://yum.opennms.org/repofiles/opennms-repo-stable-fc13.noarch.rpm</filename>, type: <command>su -c 'rpm -Uvh http://yum.opennms.org/repofiles/opennms-repo-stable-fc13.noarch.rpm'</command>.
+		</para>
+		<para>
+			Once you've installed the distribution-specific RPM package of your choice, a query of the YUM database should show &PRODUCT; as an available install option when you check <command>yum search opennms</command>:
+			<screen>
+[user@opennms ~]$ yum search opennms
+Loaded plugins: fastestmirror
+Excluding Packages from CentOS-5 - Base
+Finished
+Excluding Packages from CentOS-5 - Updates
+Finished
+============================ Matched: opennms =======================================
+mib2opennms.i386 : Generate OpenNMS Events from MIB Traps
+mib2opennms.x86_64 : Generate OpenNMS Events from MIB Traps
+opennms.noarch : Enterprise-grade Network Management Platform (Easy Install)
+opennms-core.noarch : The core OpenNMS backend.
+opennms-docs.noarch : Documentation for the OpenNMS network management platform
+opennms-plugin-provisioning-dns.noarch : DNS Provisioning Adapter for OpenNMS
+opennms-plugin-provisioning-link.noarch : Link Provisioning Adapter for OpenNMS
+opennms-plugin-provisioning-map.noarch : Map Provisioning Adapter for OpenNMS
+opennms-plugin-provisioning-rancid.noarch : RANCID Provisioning Adapter for OpenNMS
+opennms-plugin-ticketer-centric.noarch : OpenNMS Trouble-Ticketer Plugin: CentricCRM
+opennms-plugins.noarch : All Plugins for OpenNMS
+opennms-remote-poller.noarch : Remote (Distributed) Poller for OpenNMS
+opennms-repo-stable.noarch : Yum repository files for stable/rhel5 OpenNMS
+opennms-webapp-jetty.noarch : Embedded web interface for OpenNMS
+opennms-webapp-standalone.noarch : Standalone web interface for OpenNMS
+			</screen>
+		</para>
+		<para>
+			<important>
+				<title>Systems with Older Versions of YUM</title>
+				<para>
+					Some older versions of <command>yum</command> do not recognize <filename>/etc/yum.repos.d/</filename> as a valid location for YUM repositories, which will make the command above not return any results. In this case you will need to append the &PRODUCT; repositories to the end of <filename>/etc/yum.conf</filename> by typing <command>su -c 'cat /etc/yum.repos.d/* >> /etc/yum.conf'</command> at a command prompt to ensure YUM is able to fetch the packages from the &PRODUCT; repository.
+				</para>
+			</important>
+			<warning>
+				<title>Prematurely Installing &PRODUCT; Packages</title>
+				<para>
+					While the &PRODUCT; packages are now available for installing, doing so before following the next steps will result in an unoptimized database configuration.
+				</para>
+			</warning>
+		</para>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_RPM_Systems-Installing_PostgreSQL">
+		<title>Installing the PostgreSQL Database Server</title>
+		<para>
+			While YUM will install the PostgreSQL packages automatically, there are several reasons to install PostgreSQL prior to your &PRODUCT; installation:
+			<itemizedlist>
+				<listitem>
+					<para>
+						Installing PostgreSQL first will result in an optimized IPLIKE stored procedure for your &PRODUCT; database, greatly improving performance.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Your Linux distribution may ship with a version of PostgreSQL that may not have the optimizations and features of a later version of PostgreSQL. Later versions of PostgreSQL ship with maintenance features turned on by default, which greatly help with maintenance of the &PRODUCT; database after deployment. For more information on this topic, see the <ulink url="https://public.commandprompt.com/projects/pgcore/wiki/Configure_Yum">Configuring YUM</ulink> section of the commandprompt.com wiki.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			To install PostgreSQL from your distribution's official sources, type: <command>su -c 'yum -y install postgresql-server''</command> as root or a user with root privileges at a command prompt.
+		</para>
+		<para>
+			After successful installation of the PostgreSQL server you will need to initialize the database with <command>su -c 'service postgresql initdb'</command>, then start the database with <command>su -c 'service postgresql start'</command>. To ensure this configuration is persistent upon a reboot of the server, type: <command>su -c 'chkconfig postgresql on'</command> at the command prompt.
+		</para>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_RPM_Systems-Configuring_PostgreSQL">
+		<title>Configuring PostgreSQL For &PRODUCT;</title>
+		<para>
+			&PRODUCT; needs to be able to connect to PostgreSQL as the <systemitem>postgres</systemitem> user over a TCP/IP connection by default.
+		</para>
+		<para>
+			To allow &PRODUCT; to connect to the database, you will need to edit your database's <filename>pg_hba.conf</filename> file. Consult your distribution's PostgreSQL documentation for the location of this file.
+		</para>
+		<para>
+			By default <filename>pg_hba.conf</filename> should have entries similar to the following at the bottom of the file:
+			<screen>
+local   all         all                               ident sameuser
+host    all         all         127.0.0.1/32          ident sameuser
+host    all         all         ::1/128               ident sameuser
+			</screen>
+			You will need to change these entries to the following:
+			<screen>
+local   all         all                               trust
+host    all         all         127.0.0.1/32          trust
+host    all         all         ::1/128               trust
+			</screen>
+		</para>
+		<para>
+			Next, you will need to edit <filename>postgresql.conf</filename> to accept TCP/IP connections. As with <filename>pg_hba.conf</filename>, check your distribution's PostgreSQL documentation for the location of this file, by default they should be in the same location. Depending on your version of PostgreSQL, the directive in the configuration may be <systemitem>tcpip_socket</systemitem> or <systemitem>listen_addresses</systemitem> within the <filename>postgresql.conf</filename> file. Configuration file comments will indicate whether you need to uncomment this to make the daemon listen or what you may need to change this parameter to. Make the appropriate changes, save your file, and quit your editor. 
+		</para>
+		<para>
+			To apply the changes you've made to the PostgreSQL configuration, you will need to restart it with <command>su -c 'service postgresql restart'</command>
+		</para>
+		<para>
+			Lastly, to create the database for &PRODUCT; to use, as the root user type: <command>su - postgres -c 'createdb -U postgres -E UNICODE opennms'</command> at the command prompt.
+		</para>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_RPM_Systems-Installing_OpenNMS">
+		<title>Installing OpenNMS</title>
+		<para>
+			With all the prerequisites taken care of, you can now install OpenNMS. The OpenNMS software is not a single package, but a combination of many components. The YUM packaging system will download and install all of these components and their dependencies, such as the Java environment and others if they are not already configured on your system. 
+		</para>
+		<para>
+			There are many packages available in the &PRODUCT; YUM repository, but as this is a quick start, we will install the one package that will provide everything you need to get started. To install this package type: <command>su -c 'yum install opennms'</command>. If you are on a fast connection and have setup the YUM <systemitem>fastestmirror</systemitem> plugin, this will take just a few moments to download the packages required and proceed to installing them.
+		</para>
+		<important>
+			<title>Disabling the OpenNMS Repository</title>
+			<para>
+				Some distributions that use YUM/RPM as a package manager will attempt an automatic <command>yum update</command> at regular intervals. A system administrator might also run a manual <command>yum update</command> and inadvertently upgrade the &PRODUCT; causing misconfiguration or complete failure. To avoid these scenarios, disable the &PRODUCT; repositories after successful installation by adding <computeroutput>enabled=0</computeroutput> to the files matching <filename>/etc/yum.repos.d/opennms*</filename>.
+			</para>
+		</important>
+	</section>
+	<section id="sect-Quickstart_Guide-Quickstart_Install_for_RPM_Systems-OpenNMS_PostInstall_Configuration">
+		<title>&PRODUCT; Post-Install Configuration</title>
+		<para>
+			Now that &PRODUCT; is installed on your system, there are a few tasks to complete before starting the service.
+		</para>
+		<para>
+			First, &PRODUCT; needs to which Java JDK it needs to take advantage of. To set this and persist the setting, run: <command>su -c '/opt/opennms/bin/runjava -s'</command>. Running this command will search through your system for possible Java environments to use and select the best one for &PRODUCT; to use. 
+		</para>
+		<para>
+			Next, you will need to run the &PRODUCT; installer which will bootstrap your database and initialize the system to prepare for operation. Depending on your system's hardware, this could take anywhere from a few moments to a few minutes. If the installer cannot proceed for some reason, or there is a problem with the system configuration, the installer will do its best to tell you what is wrong and how to remedy it. If the installer does not provide a remedy for your situation, consult the sources in the Feedback section of the <xref linkend="pref-Quickstart_Guide-Preface" />.
+		</para>
+		<para>
+			Once the installer is complete, you can start &PRODUCT;. To start &PRODUCT; on most systems that use YUM, type: <command>su -c 'service opennms start'</command>. If you wish to have &PRODUCT; started at boot-time, you will need to set this with <command>chkconfig</command>. On most systems, use <command>su -c 'chkconfig opennms on'</command> to have &PRODUCT; started at boot time. 
+		</para>
+		<para>
+			You can now login to your &PRODUCT; instance at <filename>http://<replaceable>your-server-address</replaceable>:8980/opennms/</filename>.
+		</para>
+	</section>
+</chapter>
+
+
